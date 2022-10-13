@@ -17,7 +17,7 @@ const controller_address = "cfxtest:acc44su6m7sm6mksmdbvcnh9rp6ukj2yva7ee43nzy";
 const name_wrapper_address='cfxtest:acgmx74wb372f3azk2g8f7324fvc5mkprjftx7eb4a'
 const reverse_registrar_address='cfxtest:acbbvt09yr3z6fvkp3p92fk81e1ustw226n5vr4thh'
 const base_registrar_address='cfxtest:acaur7c1r24cnyjb6jkxg6a17kzapzvhtjv4py4nvr'
-const public_resolver_address='cfxtest:acbures2c1033f2zbamh9wyvn2b1gnzc3pgmhkt4jc'
+export const public_resolver_address='cfxtest:acbures2c1033f2zbamh9wyvn2b1gnzc3pgmhkt4jc'
 
 export const controllerAddressContract = cfxClient.Contract({
   abi: controllerData.abi,

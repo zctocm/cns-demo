@@ -2,6 +2,7 @@
   "name": "cns-test",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://zctocm.github.io/cns-demo",
   "dependencies": {
     "@cfxjs/use-wallet-react": "^0.0.1-33",
     "@ensdomains/address-encoder": "^0.2.18",
@@ -10,6 +11,7 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "buffer": "^6.0.3",
+    "gh-pages": "^4.0.0",
     "js-conflux-sdk": "^2.1.6",
     "process": "^0.11.10",
     "react": "^18.2.0",
@@ -21,6 +23,8 @@
     "web3ns": "^0.0.1"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",
