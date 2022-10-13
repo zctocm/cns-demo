@@ -102,10 +102,10 @@ function App() {
     const result = await nameWrapperContract.safeTransferFrom(
       account,
       newOwnerAddress,
-      hash(label),
+      hash(name),
       1,
       "0x"
-    );
+    ).sendTransaction({ from: account });
     console.info("result", result);
   };
 
@@ -181,7 +181,7 @@ function App() {
           <button onClick={getStatus}>获取name的注册状态</button>
           <button onClick={showNameList}>获取钱包账户的域名列表</button>
           <button onClick={getOwner}>获取某个地址的owner</button>
-          <button onClick={transfer}>转让(todo)</button>
+          <button onClick={transfer}>转让</button>
           <button onClick={getName}>获取反向记录(todo)</button>
           <button onClick={setCNSName}>设置反解析(setName)</button>
           <button onClick={getExpires}>获取域名到期时间</button>
