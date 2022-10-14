@@ -116,9 +116,9 @@ function App() {
   };
 
   const getName = async () => {
-    //TODO: result需要特殊处理下
     const result = await reverseRegistrarContract.node(account);
-    console.info("result", result.toString("hex"));
+    const name=await publicResolverContract.name(result)
+    console.info("name",name)
   };
 
   const getExpires = async () => {
