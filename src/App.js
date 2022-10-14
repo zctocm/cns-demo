@@ -11,11 +11,10 @@ import {
   public_resolver_address,
 } from "./utils/cfx";
 import { namehash, labelhash } from "./utils";
-import { formatsByCoinType } from "@ensdomains/address-encoder";
+import { formatsByCoinType } from "@web3identity/address-encoder";
 
 const domainRoot = ".web3";
 const newOwnerAddress = "cfxtest:aak4f159yxde9npgyznpgmrr1may7nctw6juau4bvp";
-
 function App() {
   const account = useAccount();
   const [label, setLabel] = useState("");
@@ -148,14 +147,37 @@ function App() {
   const setAddr = async () => {
     const coinTypeInstance = formatsByCoinType[0];
     const inputCoinType = coinTypeInstance.coinType;
+    console.info('inputCoinType',inputCoinType)
     //set bitcoin address
     const address = "3HjgXRAs88Kdo19eQSpmDoiardRDB2AV4c";
     const encodedAddress = coinTypeInstance.decoder(address);
+    console.info('encodedAddress',encodedAddress)
     const result = await publicResolverContract
-      .setAddr(namehash(name), inputCoinType, encodedAddress)
+      .setAddr(hash(name), inputCoinType, encodedAddress)
       .sendTransaction({ from: account });
     console.info("result", result);
   };
+
+  const getCfxAddr = async () => {
+    const coinTypeInstance = formatsByCoinType[503];
+    const inputCoinType = coinTypeInstance.coinType;
+    const result = await publicResolverContract.addr(
+      namehash(name),
+      inputCoinType
+    );
+    console.info("result", coinTypeInstance.encoder(result));
+  }
+
+  const setCfxAddr = async () => {
+    const address = 'cfx:aak86utdktvnh3yta2kjvz62yae3kkcu1yzbpza8rb';
+    const coinTypeInstance = formatsByCoinType[503];
+    const inputCoinType = coinTypeInstance.coinType;
+    const encodedAddress = coinTypeInstance.decoder(address);
+    const result = await publicResolverContract
+      .setAddr(hash(name), inputCoinType, encodedAddress)
+      .sendTransaction({ from: account });
+    console.info("result", result);
+  }
 
   return (
     <div className="App">
@@ -188,6 +210,8 @@ function App() {
           <button onClick={renew}>续费1年</button>
           <button onClick={getAddr}>地址解析-获取btc地址</button>
           <button onClick={setAddr}>地址解析-设置btc</button>
+          <button onClick={getCfxAddr}>地址解析-获取cfx地址</button>
+          <button onClick={setCfxAddr}>地址解析-设置cfx</button>
         </article>
       <div></div>
     </div>
