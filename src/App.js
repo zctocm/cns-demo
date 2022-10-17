@@ -3,12 +3,8 @@ import { useState, useEffect } from "react";
 import { useAccount, connect } from "@cfxjs/use-wallet-react/conflux";
 import { hash } from "@ensdomains/eth-ens-namehash";
 import {
-  controllerAddressContract as controller,
-  nameWrapperContract,
-  reverseRegistrarContract,
-  baseRegistrarContract,
-  publicResolverContract,
   public_resolver_address,
+  web3domain
 } from "./utils/cfx";
 import { namehash, labelhash } from "./utils";
 import { formatsByCoinType } from "@web3identity/address-encoder";
@@ -40,7 +36,7 @@ function App() {
 
   const commit = async () => {
     // Submit our commitment to the smart contract
-    const commitment = await controller.makeCommitment(
+    const commitment = await web3domain.Web3Controller.makeCommitment(
       label,
       owner,
       duration,
@@ -51,16 +47,16 @@ function App() {
       fuses,
       wrapperExpiry
     );
-    const txHash = await controller
-      // .commitWithName(commitment,labelhash(label))
-      .commit(commitment)
+    const txHash = await web3domain.Web3Controller
+      .commitWithName(commitment,labelhash(label))
+      // .commit(commitment)
       .sendTransaction({ from: account });
     console.info("txHash", txHash);
   };
 
   const register = async () => {
-    const [price] = await controller.rentPrice(label, duration);
-    await controller
+    const [price] = await web3domain.Web3Controller.rentPrice(label, duration);
+    await web3domain.Web3Controller
       .register(
         label,
         owner,
@@ -76,29 +72,29 @@ function App() {
   };
 
   const getStatus = async () => {
-    const status = await controller.labelStatus(label);
+    const status = await web3domain.Web3Controller.labelStatus(label);
     console.info("状态: ", status.toString());
   };
 
   const showNameList = async () => {
-    const list = await nameWrapperContract.userDomains(account);
+    const list = await web3domain.NameWrapper.userDomains(account);
     console.info("域名列表: ", list);
   };
 
   const getAge = async () => {
-    const minAge = await controller.minCommitmentAge();
-    const maxAge = await controller.maxCommitmentAge();
+    const minAge = await web3domain.Web3Controller.minCommitmentAge();
+    const maxAge = await web3domain.Web3Controller.maxCommitmentAge();
     console.info("最小间隔时间:", minAge?.toString() + "秒");
     console.info("最大间隔时间:", maxAge?.toString() + "秒");
   };
 
   const getOwner = async () => {
-    const result = await nameWrapperContract.ownerOf(hash(name));
+    const result = await web3domain.NameWrapper.ownerOf(hash(name));
     console.info("拥有者", result);
   };
 
   const transfer = async () => {
-    const result = await nameWrapperContract.safeTransferFrom(
+    const result = await web3domain.NameWrapper.safeTransferFrom(
       account,
       newOwnerAddress,
       hash(name),
@@ -109,26 +105,26 @@ function App() {
   };
 
   const setCNSName = async () => {
-    const result = await reverseRegistrarContract
-      .setName(name)
+    const result = await web3domain.ReverseRegistrar
+      .setName("abce3.web3")
       .sendTransaction({ from: account });
     console.info("result", result);
   };
 
   const getName = async () => {
-    const result = await reverseRegistrarContract.node(account);
-    const name=await publicResolverContract.name(result)
+    const result = await web3domain.ReverseRegistrar.node(account);
+    const name=await web3domain.PublicResolver.name(result)
     console.info("name",name)
   };
 
   const getExpires = async () => {
-    const result = await baseRegistrarContract.nameExpires(labelhash(label));
+    const result = await web3domain.Web3BaseRegistrar.nameExpires(labelhash(label));
     console.info("result", new Date(Number(result.toString() * 1000)));
   };
 
   const renew = async () => {
-    const [price] = await controller.rentPrice(label, duration);
-    const txHash = await controller
+    const [price] = await web3domain.Web3Controller.rentPrice(label, duration);
+    const txHash = await web3domain.Web3Controller
       .renew(label, duration)
       .sendTransaction({ from: account, value: price });
     console.info("txHash", txHash);
@@ -137,7 +133,7 @@ function App() {
   const getAddr = async () => {
     const coinTypeInstance = formatsByCoinType[0];
     const inputCoinType = coinTypeInstance.coinType;
-    const result = await publicResolverContract.addr(
+    const result = await web3domain.PublicResolver.addr(
       namehash(name),
       inputCoinType
     );
@@ -152,7 +148,7 @@ function App() {
     const address = "3HjgXRAs88Kdo19eQSpmDoiardRDB2AV4c";
     const encodedAddress = coinTypeInstance.decoder(address);
     console.info('encodedAddress',encodedAddress)
-    const result = await publicResolverContract
+    const result = await web3domain.PublicResolver
       .setAddr(hash(name), inputCoinType, encodedAddress)
       .sendTransaction({ from: account });
     console.info("result", result);
@@ -161,7 +157,7 @@ function App() {
   const getCfxAddr = async () => {
     const coinTypeInstance = formatsByCoinType[503];
     const inputCoinType = coinTypeInstance.coinType;
-    const result = await publicResolverContract.addr(
+    const result = await web3domain.PublicResolver.addr(
       namehash(name),
       inputCoinType
     );
@@ -173,7 +169,7 @@ function App() {
     const coinTypeInstance = formatsByCoinType[503];
     const inputCoinType = coinTypeInstance.coinType;
     const encodedAddress = coinTypeInstance.decoder(address);
-    const result = await publicResolverContract
+    const result = await web3domain.PublicResolver
       .setAddr(hash(name), inputCoinType, encodedAddress)
       .sendTransaction({ from: account });
     console.info("result", result);
@@ -204,7 +200,7 @@ function App() {
           <button onClick={showNameList}>获取钱包账户的域名列表</button>
           <button onClick={getOwner}>获取某个地址的owner</button>
           <button onClick={transfer}>转让</button>
-          <button onClick={getName}>获取反向记录(todo)</button>
+          <button onClick={getName}>获取反向记录</button>
           <button onClick={setCNSName}>设置反解析(setName)</button>
           <button onClick={getExpires}>获取域名到期时间</button>
           <button onClick={renew}>续费1年</button>
